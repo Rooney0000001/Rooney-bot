@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rooney Bot – Dashboard</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--green:#25d366;--dark:#128c7e;--gray:#f0f2f5;--text:#111b21;--muted:#667781}
+    body{font-family:'Segoe UI',sans-serif;background:var(--gray);color:var(--text);min-height:100vh}
+    nav{background:#fff;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e9edef}
+    .logo{font-size:1.3rem;font-weight:800;color:var(--dark)}.logo span{color:var(--green)}
+    .back{background:transparent;border:1.5px solid var(--green);color:var(--green);padding:8px 18px;border-radius:100px;font-weight:600;font-size:.85rem;cursor:pointer;text-decoration:none}
+    .container{max-width:900px;margin:0 auto;padding:32px 20px}
+    .banner{background:#fff;border-radius:16px;padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid #e9edef}
+    .bleft{display:flex;align-items:center;gap:12px}
+    .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+    .dot.connected{background:var(--green)}.dot.awaiting_scan,.dot.initializing{background:#f59e0b;animation:blink 1s infinite}
+    .dot.disconnected,.dot.stopped{background:#ef4444}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .sinfo h3{font-size:1rem;font-weight:700}.sinfo p{font-size:.82rem;color:var(--muted);margin-top:2px}
+    .stop-btn{background:#fee2e2;color:#dc2626;border:none;padding:10px 20px;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer}
+    .stitle{font-size:1.1rem;font-weight:800;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #e9edef}
+    .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:36px}
+    .feat{background:#fff;border-radius:14px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border:1px solid #e9edef}
+    .feat:hover{box-shadow:0 2px 12px rgba(37,211,102,.1)}
+    .finfo{display:flex;align-items:center;gap:12px}
+    .ficon{font-size:1.4rem}.fname{font-size:.9rem;font-weight:600}
+    .toggle{position:relative;width:48px;height:26px;flex-shrink:0}
+    .toggle input{opacity:0;width:0;height:0}
+    .slider{position:absolute;inset:0;background:#ddd;border-radius:100px;cursor:pointer;transition:.25s}
+    .slider::before{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;left:3px;bottom:3px;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    input:checked+.slider{background:var(--green)}
+    input:checked+.slider::before{transform:translateX(22px)}
+    #qr-sec{background:#fff;border-radius:16px;padding:28px;text-align:center;border:1px solid #e9edef;margin-bottom:28px;display:none}
+    #qr-sec h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+    #qr-sec p{color:var(--muted);font-size:.85rem;margin-bottom:16px}
+    #dash-qr{width:180px;height:180px;border-radius:12px;border:3px solid var(--green)}
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999}
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="logo">Rooney<span>Bot</span></div>
+  <a href="/" class="back">← Back</a>
+</nav>
+<div class="container">
+  <div class="banner">
+    <div class="bleft">
+      <div class="dot initializing" id="d-dot"></div>
+      <div class="sinfo">
+        <h3 id="d-status">Loading...</h3>
+        <p>Session ID: <strong id="d-sid">–</strong></p>
+      </div>
+    </div>
+    <button class="stop-btn" onclick="stopBot()">⛔ Stop Bot</button>
+  </div>
+  <div id="qr-sec">
+    <h3>📱 Scan to Connect</h3>
+    <p>Open WhatsApp → Linked Devices → Link a Device</p>
+    <img id="dash-qr" src="" alt="QR"/>
+  </div>
+  <div class="stitle">⚡ Bot Features</div>
+  <div class="fgrid" id="fgrid"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  const params=new URLSearchParams(location.search);
+  const sid=params.get('id');
+  if(!sid){alert('No session ID!');location.href='/';}
+  document.getElementById('d-sid').textContent=sid;
+
+  const FEATS={
+    autoViewStatus:{icon:'👁️',label:'Auto View Status'},
+    antiDelete:{icon:'🗑️',label:'Anti Delete Message'},
+    downloadMedia:{icon:'🎵',label:'Download Songs & Videos'},
+    fakeRecording:{icon:'🎙️',label:'Fake Recording'},
+    alwaysOnline:{icon:'🟢',label:'Always Online'},
+    fakeTyping:{icon:'⌨️',label:'Fake Typing'},
+    autoLikeStatus:{icon:'❤️',label:'Auto Like Status'},
+    aiFeatures:{icon:'🧠',label:'AI Features'},
+    chatGPT:{icon:'🤖',label:'ChatGPT Integration'},
+    downloadStatus:{icon:'📥',label:'Download Status'},
+    antiCall:{icon:'📵',label:'Anti Call'},
+    chatbot:{icon:'💬',label:'Chatbot'},
+    autoBio:{icon:'✏️',label:'Auto Bio'},
+    autoReact:{icon:'😮',label:'Auto React'},
+    autoRead:{icon:'✅',label:'Auto Read Messages'},
+    autoSaveContacts:{icon:'📱',label:'Auto Save Contacts'},
+    antiBan:{icon:'🛡️',label:'Anti Ban Mode'},
+  };
+
+  function renderFeatures(features){
+    const grid=document.getElementById('fgrid');
+    if(grid.children.length>0)return;
+    for(const[key,meta]of Object.entries(FEATS)){
+      const enabled=features[key]?.enabled||false;
+      const div=document.createElement('div');
+      div.className='feat';
+      div.innerHTML=`<div class="finfo"><span class="ficon">${meta.icon}</span><span class="fname">${meta.label}</span></div>
+      <label class="toggle"><input type="checkbox" ${enabled?'checked':''} onchange="toggle('${key}',this.checked)"/><span class="slider"></span></label>`;
+      grid.appendChild(div);
+    }
+  }
+
+  async function toggle(feature,enabled){
+    await fetch(`/api/session/${sid}/feature`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({feature,enabled})});
+    showToast(`${FEATS[feature].label} ${enabled?'✅ ON':'⭕ OFF'}`);
+  }
+
+  async function stopBot(){
+    if(!confirm('Stop your bot?'))return;
+    await fetch(`/api/session/${sid}/stop`,{method:'POST'});
+    showToast('⛔ Bot stopped');
+    setTimeout(()=>location.href='/',1500);
+  }
+
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2500);
+  }
+
+  async function poll(){
+    try{
+      const res=await fetch(`/api/session/${sid}`);
+      const data=await res.json();
+      document.getElementById('d-dot').className=`dot ${data.status}`;
+      const labels={initializing:'⏳ Initializing...',awaiting_scan:'📱 Scan QR Code',connected:'✅ Bot Connected & Running',reconnecting:'🔄 Reconnecting...',disconnected:'❌ Disconnected',stopped:'⛔ Stopped'};
+      document.getElementById('d-status').textContent=labels[data.status]||data.status;
+      const qr=document.getElementById('qr-sec');
+      if(data.qr){qr.style.display='block';document.getElementById('dash-qr').src=data.qr;}else{qr.style.display='none';}
+      if(data.features)renderFeatures(data.features);
+    }catch(e){}
+  }
+  poll();setInterval(poll,3000);
+</script>
+</body>
+</html>
