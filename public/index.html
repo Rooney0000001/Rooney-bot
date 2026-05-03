@@ -16,4 +16,117 @@
     h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.1;margin-bottom:22px}
     h1 em{color:var(--green);font-style:normal}
     .subtitle{color:var(--muted);font-size:1.1rem;max-width:540px;margin:0 auto 48px;line-height:1.7}
-    .card{background:#fff;border:2px solid #e9edef;border-radius:20px;padding:36px;max-width:460
+    .card{background:#fff;border:2px solid #e9edef;border-radius:20px;padding:36px;max-width:460px;margin:0 auto 80px;box-shadow:0 4px 24px rgba(37,211,102,.08)}
+    .card h2{font-size:1.1rem;margin-bottom:20px}
+    #createBtn{width:100%;padding:16px;background:var(--green);color:#fff;font-size:1rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:.2s}
+    #createBtn:hover{background:var(--dark)}#createBtn:disabled{background:#b2dfdb;cursor:not-allowed}
+    #result{display:none;margin-top:28px}
+    .session-box{background:#f0fdf4;border:1.5px solid var(--green);border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .session-box code{font-size:1.4rem;font-weight:800;color:var(--dark);letter-spacing:3px}
+    .copy-btn{background:var(--green);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer}
+    .status-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:var(--gray);margin-bottom:16px;font-size:.9rem;font-weight:500}
+    .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .dot.initializing,.dot.awaiting_scan{background:#f59e0b;animation:blink 1s infinite}
+    .dot.connected{background:var(--green)}.dot.disconnected,.dot.stopped{background:#ef4444}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    #qr-wrap{text-align:center;margin-bottom:16px;display:none}
+    #qr-wrap p{font-size:.85rem;color:var(--muted);margin-bottom:10px}
+    #qr-img{width:200px;height:200px;border-radius:12px;border:3px solid var(--green)}
+    .go-dash{display:block;width:100%;padding:14px;background:var(--dark);color:#fff;font-weight:700;font-size:.95rem;border:none;border-radius:12px;cursor:pointer;text-decoration:none;text-align:center}
+    .feats{padding:70px 20px;background:var(--gray)}
+    .feats h2{text-align:center;font-size:2rem;font-weight:800;margin-bottom:14px}
+    .feats p{text-align:center;color:var(--muted);margin-bottom:48px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;max-width:1000px;margin:0 auto}
+    .fc{background:#fff;border-radius:14px;padding:22px;border:1px solid #e9edef}
+    .fc:hover{box-shadow:0 4px 20px rgba(37,211,102,.12)}
+    .fi{font-size:1.6rem;margin-bottom:10px}.fc h3{font-size:.9rem;font-weight:700}
+    footer{text-align:center;padding:28px;font-size:.85rem;color:var(--muted);border-top:1px solid #e9edef}
+    footer strong{color:var(--green)}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="logo">Rooney<span>Bot</span></div>
+  <button class="nav-btn" onclick="document.getElementById('launch').scrollIntoView({behavior:'smooth'})">Get Started</button>
+</nav>
+<section class="hero">
+  <div class="badge">⚡ WhatsApp Bot Platform</div>
+  <h1>Your WhatsApp Bot,<br><em>Live in Seconds</em></h1>
+  <p class="subtitle">Get a session ID, scan a QR code, and your powerful WhatsApp bot is running instantly.</p>
+  <div class="card" id="launch">
+    <h2>🚀 Launch Your Bot Now</h2>
+    <button id="createBtn" onclick="createSession()">Generate Session ID & Start Bot</button>
+    <div id="result">
+      <div class="session-box">
+        <code id="sessionIdText">–</code>
+        <button class="copy-btn" onclick="copyId()">Copy</button>
+      </div>
+      <div class="status-row">
+        <div class="dot initializing" id="statusDot"></div>
+        <span id="statusText">Initializing...</span>
+      </div>
+      <div id="qr-wrap">
+        <p>📱 Scan with WhatsApp → Linked Devices</p>
+        <img id="qr-img" src="" alt="QR Code"/>
+      </div>
+      <div id="conn-msg" style="display:none;margin-bottom:16px;color:#128c7e;font-weight:600;font-size:.9rem">✅ Bot connected and running!</div>
+      <a class="go-dash" id="dashLink" href="#" style="display:none">⚙️ Manage Features →</a>
+    </div>
+  </div>
+</section>
+<section class="feats">
+  <h2>Everything Your Bot Can Do</h2>
+  <p>Toggle any feature ON or OFF from your dashboard</p>
+  <div class="grid">
+    <div class="fc"><div class="fi">👁️</div><h3>Auto View Status</h3></div>
+    <div class="fc"><div class="fi">🗑️</div><h3>Anti Delete Message</h3></div>
+    <div class="fc"><div class="fi">🎵</div><h3>Download Songs & Videos</h3></div>
+    <div class="fc"><div class="fi">🎙️</div><h3>Fake Recording</h3></div>
+    <div class="fc"><div class="fi">🟢</div><h3>Always Online</h3></div>
+    <div class="fc"><div class="fi">⌨️</div><h3>Fake Typing</h3></div>
+    <div class="fc"><div class="fi">❤️</div><h3>Auto Like Status</h3></div>
+    <div class="fc"><div class="fi">🧠</div><h3>AI Features</h3></div>
+    <div class="fc"><div class="fi">🤖</div><h3>ChatGPT Integration</h3></div>
+    <div class="fc"><div class="fi">📥</div><h3>Download Status</h3></div>
+    <div class="fc"><div class="fi">📵</div><h3>Anti Call</h3></div>
+    <div class="fc"><div class="fi">💬</div><h3>Chatbot</h3></div>
+    <div class="fc"><div class="fi">✏️</div><h3>Auto Bio</h3></div>
+    <div class="fc"><div class="fi">😮</div><h3>Auto React</h3></div>
+    <div class="fc"><div class="fi">✅</div><h3>Auto Read Messages</h3></div>
+    <div class="fc"><div class="fi">📱</div><h3>Auto Save Contacts</h3></div>
+    <div class="fc"><div class="fi">🛡️</div><h3>Anti Ban Mode</h3></div>
+  </div>
+</section>
+<footer>Built with ❤️ by <strong>Rooney Bot</strong> • WhatsApp Bot Platform</footer>
+<script>
+  let currentSessionId=null,pollInterval=null;
+  async function createSession(){
+    const btn=document.getElementById('createBtn');
+    btn.disabled=true;btn.textContent='Creating session...';
+    try{
+      const res=await fetch('/api/create-session',{method:'POST'});
+      const data=await res.json();
+      currentSessionId=data.sessionId;
+      document.getElementById('sessionIdText').textContent=currentSessionId;
+      document.getElementById('result').style.display='block';
+      document.getElementById('dashLink').href=`/dashboard?id=${currentSessionId}`;
+      startPolling(currentSessionId);
+    }catch(e){btn.disabled=false;btn.textContent='Generate Session ID & Start Bot';alert('Error! Is server running?');}
+  }
+  function startPolling(id){
+    pollInterval=setInterval(async()=>{
+      try{const res=await fetch(`/api/session/${id}`);const data=await res.json();updateUI(data);if(data.status==='connected')clearInterval(pollInterval);}catch(e){}
+    },2000);
+  }
+  function updateUI(data){
+    document.getElementById('statusDot').className=`dot ${data.status}`;
+    const labels={initializing:'⏳ Initializing...',awaiting_scan:'📱 Waiting for QR scan...',connected:'✅ Connected',reconnecting:'🔄 Reconnecting...',disconnected:'❌ Disconnected',stopped:'⛔ Stopped'};
+    document.getElementById('statusText').textContent=labels[data.status]||data.status;
+    const qrWrap=document.getElementById('qr-wrap');
+    if(data.qr){qrWrap.style.display='block';document.getElementById('qr-img').src=data.qr;}else{qrWrap.style.display='none';}
+    if(data.status==='connected'){document.getElementById('conn-msg').style.display='block';document.getElementById('dashLink').style.display='block';}
+  }
+  function copyId(){navigator.clipboard.writeText(currentSessionId);event.target.textContent='Copied!';setTimeout(()=>event.target.textContent='Copy',2000);}
+</script>
+</body>
+                                    </html>
